@@ -27,7 +27,7 @@ public class CSVStream {
     public String next() throws IOException {
         String token = "";
         while (deliminatorCheck(token)) {
-            token += read();
+            token += (char)read();
         }
         return token.substring(0, token.length() - 1);
     }
