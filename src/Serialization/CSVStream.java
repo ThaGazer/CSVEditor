@@ -3,6 +3,8 @@ package Serialization;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 public class CSVStream {
@@ -30,6 +32,14 @@ public class CSVStream {
             token += (char)read();
         }
         return token.substring(0, token.length() - 1);
+    }
+
+    public List<String> readLine() throws IOException {
+        LinkedList<String> rowData = new LinkedList<>();
+        while(!hitNewLine()) {
+            rowData.add(next());
+        }
+        return List.copyOf(rowData);
     }
 
     public int read() throws IOException {
