@@ -77,8 +77,14 @@ public class CSVStream {
         return a;
     }
 
-    public boolean deliminatorCheck(String token) {
-        if(token.endsWith("\r") || token.endsWith("\n")) {
+    public boolean deliminatorCheck(String token) throws IOException {
+        if(token.endsWith("\r")) {
+            if((char)read() != '\n'){
+                throw new IOException();
+            }
+            setNewLine();
+            return false;
+        } else if(token.endsWith("\n")) {
             setNewLine();
             return false;
         } else {
