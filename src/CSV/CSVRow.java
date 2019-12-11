@@ -4,32 +4,50 @@ import Serialization.CSVStream;
 
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
-class Row {
-    private String title;
+class CSVRow {
+    private String header;
     private LinkedList<String> data;
 
-    public Row() {
+    public CSVRow() {
         data = new LinkedList<>();
     }
 
-    public Row(String rowTitle, LinkedList<String> rowData) {
+    public CSVRow(String rowTitle) {
+        this(rowTitle, new LinkedList<>());
+    }
+
+    public CSVRow(String rowTitle, List<String> rowData) {
         this();
-        setTitle(rowTitle);
+        setHeader(rowTitle);
         setData(rowData);
     }
 
-    public Row(CSVStream inputStream) throws IOException {
-        while(!inputStream.hitNewLine()) {
-            inputStream.next();
+    public CSVRow(CSVStream inputStream) throws IOException {
+        setData(inputStream.readLine());
+    }
+
+    protected void setHeader(String rowHeader) {
+        header = rowHeader;
+    }
+
+    protected void setData(List<String> rowData) {
+        data.addAll(Objects.requireNonNull(rowData));
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder row = new StringBuilder();
+        for(String cell : data) {
+            row.append(cell).append("  ");
         }
-    }
-
-    private void setTitle(String rowTitle) {
-        title = rowTitle;
-    }
-
-    private void setData(LinkedList<String> rowData) {
-        data.addAll(rowData);
+        row.append("\n");
+        return row.toString();
     }
 }
