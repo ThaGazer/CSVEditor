@@ -41,11 +41,6 @@ class CSVRow {
             return null;
         }
 
-        StringBuilder row = new StringBuilder();
-        for(String cell : data) {
-            row.append(cell).append("  ");
-        }
-        row.append("\n");
-        return row.toString();
+        return getData().toString();
     }
 }
