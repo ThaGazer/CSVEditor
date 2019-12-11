@@ -23,13 +23,12 @@ public class main {
         new main().go(args);
     }
 
-    public void go(String[] args){
-
+    public void go(String[] args) {
         handleUserArgs(args);
 
         try {
             readCSV();
-        } catch (IOException e) {
+        } catch(IOException e) {
             e.printStackTrace();
         }
 
@@ -53,15 +52,18 @@ public class main {
         }
     }
 
-    private void setFile(String filename) {
+    private void readCSV() throws IOException {
+        table = CSVTable.parse(csvStream, hasHeader());
+    }
 
-        setCSVFileStream(csvFile);
+    private void setFile(String filename) {
+        setCSVFileStream(csvFile = new File(filename));
     }
 
     private void setCSVFileStream(File file) {
         try {
             csvStream = new CSVStream(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
+        } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -72,10 +74,6 @@ public class main {
 
     private boolean hasHeader() {
         return headerFlag;
-    }
-
-    private void readCSV() throws IOException {
-        table = CSVTable.parse(csvStream, headerFlag);
     }
 
     private void printCSV() {

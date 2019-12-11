@@ -8,41 +8,39 @@ import java.util.List;
 import java.util.Objects;
 
 class CSVRow {
-    private String header;
     private LinkedList<String> data;
 
     public CSVRow() {
         data = new LinkedList<>();
     }
 
-    public CSVRow(String rowTitle) {
-        this(rowTitle, new LinkedList<>());
-    }
-
-    public CSVRow(String rowTitle, List<String> rowData) {
+    public CSVRow(List<String> rowData) {
         this();
-        setHeader(rowTitle);
         setData(rowData);
     }
 
     public CSVRow(CSVStream inputStream) throws IOException {
-        setData(inputStream.readLine());
-    }
-
-    protected void setHeader(String rowHeader) {
-        header = rowHeader;
+        this(inputStream.readLine());
     }
 
     protected void setData(List<String> rowData) {
         data.addAll(Objects.requireNonNull(rowData));
     }
 
-    public String getHeader() {
-        return header;
+    protected List<String> getData() {
+        return data;
+    }
+
+    protected boolean isEmpty() {
+        return data.isEmpty();
     }
 
     @Override
     public String toString() {
+        if(isEmpty()) {
+            return null;
+        }
+
         StringBuilder row = new StringBuilder();
         for(String cell : data) {
             row.append(cell).append("  ");

@@ -3,26 +3,22 @@ package CSV;
 import Serialization.CSVStream;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class CSVTable {
+    private boolean hasHeaders = false;
     private LinkedList<CSVRow> data;
 
-    private boolean hasHeaders = false;
-
     public static CSVTable parse(CSVStream stream, boolean headers) throws IOException {
-        CSVTable tmp = new CSVTable();
+        CSVTable tmpTable = new CSVTable();
+        tmpTable.setHeaderFlag(headers);
 
-        tmp.setHeaderFlag(headers);
-
-        if(tmp.hasHeaders()) {
-            tmp.setHeaders(stream.readLine());
+        while(!stream.hitEOF()) {
+            tmpTable.addRow(stream);
         }
 
-
-        return tmp;
+        return tmpTable;
     }
 
     public CSVTable() {
@@ -33,18 +29,20 @@ public class CSVTable {
         hasHeaders = header;
     }
 
-    private void setHeaders(List<String> headers) {
-        for(int i = 0; i < headers.size(); i++) {
-
-        }
+    public List<String> getHeaders() {
+        return hasHeaders() ? getRow(0) : null;
     }
 
-    public List<String> getHeaders() {
-        ArrayList<String> headers = new ArrayList<>();
-        for(CSVRow row : data) {
-            headers.add(row.getHeader());
-        }
-        return headers;
+    public void addRow(CSVStream stream) throws IOException {
+        data.add(new CSVRow(stream));
+    }
+
+    public void addRow(List<String> newRow) {
+        data.add(new CSVRow(newRow));
+    }
+
+    public List<String> getRow(int i) {
+        return data.get(i).getData();
     }
 
     public List<CSVRow> getTable() {
@@ -58,18 +56,6 @@ public class CSVTable {
 
     @Override
     public String toString() {
-        StringBuilder printedTable = new StringBuilder();
-
-        for(String header : getHeaders()) {
-            printedTable.append(header).append("  ");
-        }
-        printedTable.append("\n");
-
-        for(CSVRow row : data) {
-            printedTable.append(row.toString());
-        }
-        printedTable.append("\n");
-
-        return printedTable.toString();
+        return getTable().toString();
     }
 }
