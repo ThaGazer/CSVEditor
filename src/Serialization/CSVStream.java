@@ -1,6 +1,5 @@
 package Serialization;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -9,33 +8,44 @@ import java.util.Objects;
 
 public class CSVStream {
 
+    private static final String DEFAULT_DELIMINATOR = ",";
+
     private InputStream in;
-    private String delim = " ";
+    private String deliminator;
     private boolean newLine = false;
     private boolean eof = false;
 
+    public CSVStream() {
+        setDeliminator(DEFAULT_DELIMINATOR);
+    }
+
     public CSVStream(InputStream inputStream) {
-        in = Objects.requireNonNull(inputStream);
+        this(inputStream, DEFAULT_DELIMINATOR);
     }
 
-    public CSVStream(InputStream inputStream, String token) {
+    public CSVStream(InputStream inputStream, String deliminator) {
+        this();
         in = Objects.requireNonNull(inputStream);
-        setDeliminator(token);
+
+        setDeliminator(deliminator);
     }
 
-    private void setDeliminator(String token) {
-        delim = token;
+    private void setDeliminator(String newDeliminator) {
+        if(!"".equals(newDeliminator)) {
+            deliminator = newDeliminator;
+        }
+    }
+
+    public boolean isNull() {
+        return in == null;
     }
 
     public String next() throws IOException {
         String token = "";
-        while (deliminatorCheck(token)) {
-            int a;
-            if((a = read()) == -1) {
-                return token;
-            }
-            token += (char)a;
-        }
+        do {
+            token += (char)read();
+        } while(!hitEOF() && deliminatorCheck(token));
+
         return token.substring(0, token.length() - 1);
     }
 
@@ -43,36 +53,37 @@ public class CSVStream {
         LinkedList<String> rowData = new LinkedList<>();
         clearNewLine();
 
-        while(!hitNewLine() || !hitEOF()) {
-            String tmp;
-            if((tmp = next()) == null) {
-                setNewLine();
-            } else {
-                rowData.add(tmp);
-            }
-        }
+
+        do {
+            rowData.add(next());
+        } while(!hitNewLine() && !hitEOF());
+//
+//            String tmp;
+//            if("".equals(tmp = next())) {
+//                setEOF();
+//            } else {
+//                rowData.add(tmp);
+//            }
+//        }
 
         return List.copyOf(rowData);
     }
 
     public int read() throws IOException {
         int a;
-        if ((a = in.read()) == -1) {
-            eof = true;
+        if((a = in.read()) == -1) {
+            setEOF();
         }
         return a;
     }
 
     public boolean deliminatorCheck(String token) {
-        if (!token.endsWith("\n")) {
-            clearNewLine();
-            if (!token.endsWith(delim)) {
-                return true;
-            }
-        } else {
+        if(token.endsWith("\r") || token.endsWith("\n")) {
             setNewLine();
+            return false;
+        } else {
+            return !token.endsWith(deliminator);
         }
-        return false;
     }
 
     public boolean hitNewLine() {
@@ -85,6 +96,10 @@ public class CSVStream {
 
     private void setNewLine() {
         newLine = true;
+    }
+
+    private void setEOF() {
+        eof = true;
     }
 
     private void clearNewLine() {
