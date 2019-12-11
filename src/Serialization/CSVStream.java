@@ -12,6 +12,7 @@ public class CSVStream {
     private InputStream in;
     private String delim = " ";
     private boolean newLine = false;
+    private boolean eof = false;
 
     public CSVStream(InputStream inputStream) {
         in = Objects.requireNonNull(inputStream);
@@ -29,23 +30,35 @@ public class CSVStream {
     public String next() throws IOException {
         String token = "";
         while (deliminatorCheck(token)) {
-            token += (char)read();
+            int a;
+            if((a = read()) == -1) {
+                return token;
+            }
+            token += (char)a;
         }
         return token.substring(0, token.length() - 1);
     }
 
     public List<String> readLine() throws IOException {
         LinkedList<String> rowData = new LinkedList<>();
-        while(!hitNewLine()) {
-            rowData.add(next());
+        clearNewLine();
+
+        while(!hitNewLine() || !hitEOF()) {
+            String tmp;
+            if((tmp = next()) == null) {
+                setNewLine();
+            } else {
+                rowData.add(tmp);
+            }
         }
+
         return List.copyOf(rowData);
     }
 
     public int read() throws IOException {
         int a;
         if ((a = in.read()) == -1) {
-            throw new EOFException();
+            eof = true;
         }
         return a;
     }
@@ -64,6 +77,10 @@ public class CSVStream {
 
     public boolean hitNewLine() {
         return newLine;
+    }
+
+    public boolean hitEOF() {
+        return eof;
     }
 
     private void setNewLine() {
