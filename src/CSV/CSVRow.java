@@ -19,8 +19,8 @@ class CSVRow {
         setData(rowData);
     }
 
-    public CSVRow(CSVStream inputStream) throws IOException {
-        this(inputStream.readLine());
+    public CSVRow(CSVStream stream) throws IOException {
+        this(stream.readLine());
     }
 
     protected void setData(List<String> rowData) {

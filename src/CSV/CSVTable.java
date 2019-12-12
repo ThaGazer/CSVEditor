@@ -14,9 +14,11 @@ public class CSVTable {
         CSVTable tmpTable = new CSVTable();
         tmpTable.setHeaderFlag(headers);
 
-        while(!stream.hitEOF()) {
-            tmpTable.addRow(stream);
-        }
+        try {
+            while(true) {
+                tmpTable.addRow(stream);
+            }
+        } catch(NullPointerException ignored){}
 
         return tmpTable;
     }
