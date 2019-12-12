@@ -1,6 +1,6 @@
 package CSV;
 
-import Serialization.CSVStream;
+import Serialization.CSVReader;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -19,7 +19,7 @@ class CSVRow {
         setData(rowData);
     }
 
-    public CSVRow(CSVStream stream) throws IOException {
+    public CSVRow(CSVReader stream) throws IOException {
         this(stream.readLine());
     }
 

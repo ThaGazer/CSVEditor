@@ -1,6 +1,7 @@
 package CSV;
 
-import Serialization.CSVStream;
+import Serialization.CSVReader;
+import Serialization.CSVWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class CSVTable {
     private boolean hasHeaders;
     private int startingIndex;
 
-    public static CSVTable parse(CSVStream stream, boolean headers) throws IOException {
+    public static CSVTable parse(CSVReader stream, boolean headers) throws IOException {
         CSVTable tmpTable = new CSVTable();
         tmpTable.setHeaderFlag(headers);
 
@@ -31,6 +32,13 @@ public class CSVTable {
         startingIndex = 0;
     }
 
+    public void write(CSVWriter out) throws IOException {
+        for(CSVRow row : data) {
+            out.write(String.join(",", row.getData()));
+            out.newLine();
+        }
+    }
+
     public boolean hasHeaders() {
         return hasHeaders;
     }
@@ -44,7 +52,7 @@ public class CSVTable {
         return hasHeaders() ? getRow(0) : null;
     }
 
-    public void addRow(CSVStream stream) throws IOException {
+    public void addRow(CSVReader stream) throws IOException {
         data.add(new CSVRow(stream));
     }
 

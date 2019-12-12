@@ -1,17 +1,16 @@
 import CSV.CSVTable;
-import Serialization.CSVStream;
+import Serialization.CSVReader;
+import Serialization.CSVWriter;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 public class main {
 
     private File csvFile;
     private boolean headerFlag;
     private CSVTable table;
-    private CSVStream csvStream;
+    private CSVReader csvReader;
+    private CSVWriter csvWriter;
 
     public main() {
         table = new CSVTable();
@@ -33,6 +32,10 @@ public class main {
         }
 
         printCSV();
+
+        table.moveColumn(4, 14);
+        /*System.out.println(table.searchCol(13, "Access Granted"));*/
+        printCSV();
     }
 
     private void handleUserArgs(String[] args) {
@@ -53,7 +56,12 @@ public class main {
     }
 
     private void readCSV() throws IOException {
-        table = CSVTable.parse(csvStream, hasHeader());
+        table = CSVTable.parse(csvReader, hasHeader());
+        csvReader.close();
+    }
+
+    private void writeCSV() throws IOException {
+        table.write(csvWriter);
     }
 
     private void setFile(String filename) {
@@ -62,7 +70,8 @@ public class main {
 
     private void setCSVFileStream(File file) {
         try {
-            csvStream = new CSVStream(new FileInputStream(file));
+            csvReader = new CSVReader(new FileInputStream(file));
+            csvWriter = new CSVWriter(new FileOutputStream(file));
         } catch(FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -77,6 +86,6 @@ public class main {
     }
 
     private void printCSV() {
-        System.out.println(table.toString());
+        table.printTable();
     }
 }
