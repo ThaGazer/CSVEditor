@@ -8,21 +8,21 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CSVStream {
+public class CSVReader {
     private static final String DEFAULT_DELIMINATOR = ",";
 
     private String deliminator;
     private BufferedReader streamBuffer;
 
-    public CSVStream() {
+    public CSVReader() {
         setDeliminator(DEFAULT_DELIMINATOR);
     }
 
-    public CSVStream(InputStream inputStream) {
+    public CSVReader(InputStream inputStream) {
         this(inputStream, DEFAULT_DELIMINATOR);
     }
 
-    public CSVStream(InputStream inputStream, String deliminator) {
+    public CSVReader(InputStream inputStream, String deliminator) {
         this();
 
         streamBuffer = new BufferedReader(new InputStreamReader(inputStream));
@@ -37,5 +37,9 @@ public class CSVStream {
 
     public List<String> readLine() throws IOException {
         return new LinkedList<>(Arrays.asList(streamBuffer.readLine().split(deliminator)));
+    }
+
+    public void close() throws IOException {
+        streamBuffer.close();
     }
 }
