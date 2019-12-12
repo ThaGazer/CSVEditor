@@ -47,8 +47,12 @@ public class CSVTable {
         return data.get(i).getData();
     }
 
-    public List<CSVRow> getTable() {
-        return List.copyOf(data);
+    public List<List<String>> getTable() {
+        LinkedList<List<String>> ret = new LinkedList<>();
+        for(CSVRow row : data) {
+            ret.add(row.getData());
+        }
+        return ret;
     }
 
 
