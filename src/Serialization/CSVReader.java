@@ -1,9 +1,6 @@
 package Serialization;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,14 +15,14 @@ public class CSVReader {
         setDeliminator(DEFAULT_DELIMINATOR);
     }
 
-    public CSVReader(InputStream inputStream) {
-        this(inputStream, DEFAULT_DELIMINATOR);
+    public CSVReader(File file) throws FileNotFoundException {
+        this(file, DEFAULT_DELIMINATOR);
     }
 
-    public CSVReader(InputStream inputStream, String deliminator) {
+    public CSVReader(File file, String deliminator) throws FileNotFoundException {
         this();
 
-        streamBuffer = new BufferedReader(new InputStreamReader(inputStream));
+        streamBuffer = new BufferedReader(new FileReader(file));
         setDeliminator(deliminator);
     }
 
@@ -36,7 +33,9 @@ public class CSVReader {
     }
 
     public List<String> readLine() throws IOException {
-        return new LinkedList<>(Arrays.asList(streamBuffer.readLine().split(deliminator)));
+        String line;
+        return (line = streamBuffer.readLine()) == null ? null :
+                new LinkedList<>(Arrays.asList(line.split(deliminator)));
     }
 
     public void close() throws IOException {

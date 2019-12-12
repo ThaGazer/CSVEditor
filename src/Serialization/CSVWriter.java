@@ -1,9 +1,6 @@
 package Serialization;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 
 public class CSVWriter {
     BufferedWriter streamBuffer;
@@ -12,9 +9,9 @@ public class CSVWriter {
 
     }
 
-    public CSVWriter(OutputStream outputStream) {
+    public CSVWriter(File file) throws IOException {
         this();
-        streamBuffer = new BufferedWriter(new OutputStreamWriter(outputStream));
+        streamBuffer = new BufferedWriter(new FileWriter(file));
     }
 
     public void write(String str) throws IOException {

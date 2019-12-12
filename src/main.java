@@ -34,8 +34,8 @@ public class main {
         printCSV();
 
         table.moveColumn(4, 14);
-        /*System.out.println(table.searchCol(13, "Access Granted"));*/
         printCSV();
+        //writeCSV();
     }
 
     private void handleUserArgs(String[] args) {
@@ -60,19 +60,32 @@ public class main {
         csvReader.close();
     }
 
-    private void writeCSV() throws IOException {
-        table.write(csvWriter);
+    private void writeCSV() {
+        setCSVWriter(csvFile);
+
+        try {
+            table.write(csvWriter);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void setFile(String filename) {
-        setCSVFileStream(csvFile = new File(filename));
+        setCSVReader(csvFile = new File(filename));
     }
 
-    private void setCSVFileStream(File file) {
+    private void setCSVReader(File file) {
         try {
-            csvReader = new CSVReader(new FileInputStream(file));
-            csvWriter = new CSVWriter(new FileOutputStream(file));
-        } catch(FileNotFoundException e) {
+            csvReader = new CSVReader(file);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setCSVWriter(File file) {
+        try {
+            csvWriter = new CSVWriter(file);
+        } catch(IOException e) {
             e.printStackTrace();
         }
     }
