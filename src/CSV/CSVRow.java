@@ -23,6 +23,10 @@ class CSVRow {
         this(stream.readLine());
     }
 
+    protected boolean isEmpty() {
+        return data.isEmpty();
+    }
+
     protected void setData(List<String> rowData) {
         data.addAll(Objects.requireNonNull(rowData));
     }
@@ -31,8 +35,12 @@ class CSVRow {
         return data;
     }
 
-    protected boolean isEmpty() {
-        return data.isEmpty();
+    protected String getCell(int cell) {
+        return data.get(cell);
+    }
+
+    protected void moveColumn(int col, int newLoc) {
+        data.add(newLoc, data.remove(col));
     }
 
     @Override
