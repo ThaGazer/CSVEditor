@@ -1,8 +1,5 @@
 package CSV;
 
-import Serialization.CSVReader;
-
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -17,10 +14,6 @@ class CSVRow {
     public CSVRow(List<String> rowData) {
         this();
         setData(rowData);
-    }
-
-    public CSVRow(CSVReader stream) throws IOException {
-        this(stream.readLine());
     }
 
     protected boolean isEmpty() {

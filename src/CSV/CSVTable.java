@@ -17,11 +17,10 @@ public class CSVTable {
         CSVTable tmpTable = new CSVTable();
         tmpTable.setHeaderFlag(headers);
 
-        try {
-            while(true) {
-                tmpTable.addRow(stream);
-            }
-        } catch(NullPointerException ignored){}
+        List<String> lineIn;
+        while((lineIn = stream.readLine()) != null) {
+            tmpTable.addRow(lineIn);
+        }
 
         return tmpTable;
     }
@@ -50,10 +49,6 @@ public class CSVTable {
 
     public List<String> getHeaders() {
         return hasHeaders() ? getRow(0) : null;
-    }
-
-    public void addRow(CSVReader stream) throws IOException {
-        data.add(new CSVRow(stream));
     }
 
     public void addRow(List<String> newRow) {
