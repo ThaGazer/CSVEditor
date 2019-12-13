@@ -34,16 +34,13 @@ public class main {
 
         listHeaders();
 
-        moveColumn(4,15);
+        System.out.println(findAndSet(16, "Access granted", 0, "0"));
 
-        listHeaders();
-        //System.out.println(table.searchCol(16, "Access Granted"));
-
-        /*try {
+        try {
             writeCSV();
         } catch(IOException e) {
             e.printStackTrace();
-        }*/
+        }
     }
 
     private void handleUserArgs(String[] args) {
@@ -99,6 +96,10 @@ public class main {
         table.addColumn(index, str);
     }
 
+    private void addColumn(int index, String str, String header) {
+        table.addColumn(index, str, header);
+    }
+
     private void setCell(int r, int c, String newData) {
         table.setCell(r, c, newData);
     }
@@ -113,6 +114,13 @@ public class main {
 
     private void moveColumn(int c, int newLoc) {
         table.moveColumn(c, newLoc);
+    }
+
+    private List<Integer> findAndSet(int c, String change, int c1, String change1) {
+        for(Integer i : table.searchCol(c, change)) {
+            table.setCell(i, c1, change1);
+        }
+        return table.searchCol(c1, change1);
     }
 
     private void setCSVReader(File file) {

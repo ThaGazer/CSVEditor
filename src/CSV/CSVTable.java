@@ -37,6 +37,7 @@ public class CSVTable {
     public void write(CSVWriter out) throws IOException {
         if(hasHeaders()) {
             out.write(String.join(",", getHeaders()));
+            out.newLine();
         }
 
         for(CSVRow row : data) {
@@ -95,7 +96,7 @@ public class CSVTable {
     }
 
     public void addColumn(int index, String str) {
-        addColumn(index, str, str);
+        addColumn(index, str, "");
     }
 
     public void addColumn(int index, String str, String header) {
@@ -147,12 +148,21 @@ public class CSVTable {
 
         List<String> splitCheck = Arrays.asList(check.toLowerCase().split(" "));
         for(String str : refCheck.keySet()) {
-            if(splitCheck.contains(str)) {
+            if(containsCloseEnough(splitCheck, str)) {
                 refCheck.replace(str, true);
             }
         }
 
         return !refCheck.containsValue(false);
+    }
+
+    private boolean containsCloseEnough(List<String> list, String ref) {
+        for(String str : list) {
+            if(str.contains(ref.subSequence(0,ref.length()))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void printTable() {
