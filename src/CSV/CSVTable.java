@@ -4,20 +4,23 @@ import Serialization.CSVReader;
 import Serialization.CSVWriter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class CSVTable {
     private LinkedList<CSVRow> data;
     private boolean hasHeaders;
-    private int startingIndex;
+    private List<String> headers;
 
     public static CSVTable parse(CSVReader stream, boolean headers) throws IOException {
         CSVTable tmpTable = new CSVTable();
         tmpTable.setHeaderFlag(headers);
 
         List<String> lineIn;
+        if(tmpTable.hasHeaders()) {
+            tmpTable.setHeaders(stream.readLine());
+        }
+
         while((lineIn = stream.readLine()) != null) {
             tmpTable.addRow(lineIn);
         }
@@ -27,44 +30,73 @@ public class CSVTable {
 
     public CSVTable() {
         data = new LinkedList<>();
+        headers = new LinkedList<>();
         hasHeaders = false;
-        startingIndex = 0;
     }
 
     public void write(CSVWriter out) throws IOException {
+        if(hasHeaders()) {
+            out.write(String.join(",", getHeaders()));
+        }
+
         for(CSVRow row : data) {
             out.write(String.join(",", row.getData()));
             out.newLine();
         }
     }
 
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
     public boolean hasHeaders() {
         return hasHeaders;
     }
 
-    private void setHeaderFlag(boolean header) {
-        hasHeaders = header;
-        startingIndex = hasHeaders() ? 1 : 0;
+    private void setHeaderFlag(boolean isHeader) {
+        hasHeaders = isHeader;
+    }
+
+    private void setHeaders(List<String> newHeaders) {
+        headers.addAll(newHeaders);
     }
 
     public List<String> getHeaders() {
-        return hasHeaders() ? getRow(0) : null;
-    }
-
-    public void addRow(List<String> newRow) {
-        data.add(new CSVRow(newRow));
+        return hasHeaders() ? List.copyOf(headers) : null;
     }
 
     public List<String> getRow(int i) {
-        return data.get(i).getData();
+        return List.copyOf(data.get(i).getData());
+    }
+
+    public List<String> getCol(int i) {
+        List<String> column = new LinkedList<>();
+        for(CSVRow row : data) {
+            column.add(row.getCell(i));
+        }
+        return List.copyOf(column);
     }
 
     public List<List<String>> getTable() {
-        LinkedList<List<String>> ret = new LinkedList<>();
-        data.forEach((k) -> {
-            ret.add(k.getData());
-        });
-        return ret;
+        return data.stream().map(CSVRow::getData).collect(Collectors.toList());
+    }
+
+    public void addRow(List<String> newRow) {
+        if(hasHeaders() && getHeaders().size() != newRow.size()) {
+            throw new IllegalArgumentException("Bad row sizing at " + data.size() +
+                    ": " + newRow.size() + " expected " + getHeaders().size());
+        }
+        data.add(new CSVRow(newRow));
+    }
+
+    public void addColumn(int index) {
+        addColumn(index, "");
+    }
+
+    public void addColumn(int index, String str) {
+        for(CSVRow row : data) {
+            row.addColumn(index, str);
+        }
     }
 
     public void moveColumn(int col, int newLoc) {
@@ -73,10 +105,20 @@ public class CSVTable {
         }
     }
 
+    public void setColumn(int c, String newStr) {
+        for(CSVRow row : data) {
+            row.setCell(c, newStr);
+        }
+    }
+
+    public void setCell(int r, int c, String newStr) {
+        data.get(r).setCell(c, newStr);
+    }
+
     public List<Integer> searchCol(int columnNumber, String reference) {
         List<Integer> matchingColumns = new ArrayList<>();
 
-        for(int i = startingIndex; i < data.size(); i++) {
+        for(int i = 0; i < data.size(); i++) {
             if(contains(reference, data.get(i).getCell(columnNumber))) {
                 matchingColumns.add(i);
             }
@@ -85,14 +127,19 @@ public class CSVTable {
     }
 
     private boolean contains(String reference, String check) {
-        for(String refStr : reference.toLowerCase().split(" ")) {
-            for(String checkStr : check.toLowerCase().split(" ")) {
-                if(checkStr.contains(refStr)) {
-                    return false;
-                }
+        Map<String, Boolean> refCheck = new HashMap<>();
+        for(String str : reference.toLowerCase().split(" ")) {
+            refCheck.put(str, false);
+        }
+
+        List<String> splitCheck = Arrays.asList(check.toLowerCase().split(" "));
+        for(String str : refCheck.keySet()) {
+            if(splitCheck.contains(str)) {
+                refCheck.replace(str, true);
             }
         }
-        return true;
+
+        return !refCheck.containsValue(false);
     }
 
     public void printTable() {
@@ -105,6 +152,6 @@ public class CSVTable {
 
     @Override
     public String toString() {
-        return getTable().toString();
+        return isEmpty() ? "0, 0" : getTable().size() + ", " + getTable().get(0).size();
     }
 }

@@ -32,6 +32,18 @@ class CSVRow {
         return data.get(cell);
     }
 
+    protected void setCell(int column, String newStr) {
+        data.set(column, newStr);
+    }
+
+    protected void addColumn(int index) {
+        addColumn(index, "");
+    }
+
+    protected void addColumn(int index, String str) {
+        data.add(index, str);
+    }
+
     protected void moveColumn(int col, int newLoc) {
         data.add(newLoc, data.remove(col));
     }

@@ -3,6 +3,7 @@ import Serialization.CSVReader;
 import Serialization.CSVWriter;
 
 import java.io.*;
+import java.util.List;
 
 public class main {
 
@@ -31,11 +32,23 @@ public class main {
             e.printStackTrace();
         }
 
-        printCSV();
+        listHeaders();
 
-        table.moveColumn(4, 14);
-        printCSV();
-        //writeCSV();
+        int i = 0;
+        for(List<String> row : table.getTable()) {
+            System.out.println(i + ": " + row.size());
+            i++;
+        }
+
+        //moveColumn(4,15);
+
+        //System.out.println(table.searchCol(16, "Access Granted"));
+
+        /*try {
+            writeCSV();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }*/
     }
 
     private void handleUserArgs(String[] args) {
@@ -60,7 +73,7 @@ public class main {
         csvReader.close();
     }
 
-    private void writeCSV() {
+    private void writeCSV() throws IOException {
         setCSVWriter(csvFile);
 
         try {
@@ -68,10 +81,42 @@ public class main {
         } catch(IOException e) {
             e.printStackTrace();
         }
+        csvWriter.close();
+    }
+
+    private void printCSV() {
+        table.printTable();
+    }
+
+    private void listHeaders() {
+        int i = 0;
+        for(String header : table.getHeaders()) {
+            System.out.println(i + " : " + header);
+            i++;
+        }
+    }
+
+    private void addColumn(int index) {
+        table.addColumn(index);
+    }
+    private void addColumn(int index, String str) {
+        table.addColumn(index, str);
+    }
+
+    private void setCell(int r, int c, String newData) {
+        table.setCell(r, c, newData);
+    }
+
+    private void setColumn(int c, String newStr) {
+        table.setColumn(c, newStr);
     }
 
     private void setFile(String filename) {
         setCSVReader(csvFile = new File(filename));
+    }
+
+    private void moveColumn(int c, int newLoc) {
+        table.moveColumn(c, newLoc);
     }
 
     private void setCSVReader(File file) {
@@ -96,9 +141,5 @@ public class main {
 
     private boolean hasHeader() {
         return headerFlag;
-    }
-
-    private void printCSV() {
-        table.printTable();
     }
 }
