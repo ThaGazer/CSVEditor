@@ -37,7 +37,6 @@ public class CSVReader {
         if((line = streamBuffer.readLine()) == null) {
             return null;
         }
-        line = line.replace(".", "");
 
         return Arrays.asList(aStringSplitterThatActuallyWorks(line, deliminator));
     }
