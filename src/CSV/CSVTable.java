@@ -129,18 +129,18 @@ public class CSVTable {
         data.get(r).setCell(c, newStr);
     }
 
-    public List<Integer> searchCol(int columnNumber, String reference) {
+    public List<Integer> searchCol(boolean matchExact,int columnNumber, String reference) {
         List<Integer> matchingColumns = new ArrayList<>();
 
         for(int i = 0; i < data.size(); i++) {
-            if(contains(reference, data.get(i).getCell(columnNumber))) {
+            if(contains(matchExact, reference, data.get(i).getCell(columnNumber))) {
                 matchingColumns.add(i);
             }
         }
         return matchingColumns;
     }
 
-    private boolean contains(String reference, String check) {
+    private boolean contains(boolean matchExact, String reference, String check) {
         Map<String, Boolean> refCheck = new HashMap<>();
         for(String str : reference.toLowerCase().split(" ")) {
             refCheck.put(str, false);
@@ -148,8 +148,14 @@ public class CSVTable {
 
         List<String> splitCheck = Arrays.asList(check.toLowerCase().split(" "));
         for(String str : refCheck.keySet()) {
-            if(containsCloseEnough(splitCheck, str)) {
-                refCheck.replace(str, true);
+            if(matchExact) {
+                if(splitCheck.contains(str)) {
+                    refCheck.replace(str, true);
+                }
+            } else {
+                if(containsCloseEnough(splitCheck, str)) {
+                    refCheck.replace(str, true);
+                }
             }
         }
 

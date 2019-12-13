@@ -34,7 +34,14 @@ public class main {
 
         listHeaders();
 
-        System.out.println(findAndSet(16, "Access granted", 0, "0"));
+/*        moveColumn(4,14);
+        addColumn(0,"-2", "Recurrence ref.");
+
+        listHeaders();*/
+
+        findAndSet(16, "report", 0, "2");
+
+//        System.out.println(table.searchCol(16, "report"));
 
         try {
             writeCSV();
@@ -116,8 +123,8 @@ public class main {
         table.moveColumn(c, newLoc);
     }
 
-    private List<Integer> findAndSet(int c, String change, int c1, String change1) {
-        for(Integer i : table.searchCol(c, change)) {
+    private List<Integer> findAndSet(boolean matchExact, int c, String change, int c1, String change1) {
+        for(Integer i : table.searchCol(matchExact, c, change)) {
             table.setCell(i, c1, change1);
         }
         return table.searchCol(c1, change1);
