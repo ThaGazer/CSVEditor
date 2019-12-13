@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 public class CSVTable {
     private LinkedList<CSVRow> data;
     private boolean hasHeaders;
-    private List<String> headers;
+    private CSVRow headers;
 
     public static CSVTable parse(CSVReader stream, boolean headers) throws IOException {
         CSVTable tmpTable = new CSVTable();
@@ -30,7 +30,7 @@ public class CSVTable {
 
     public CSVTable() {
         data = new LinkedList<>();
-        headers = new LinkedList<>();
+        headers = new CSVRow();
         hasHeaders = false;
     }
 
@@ -58,11 +58,11 @@ public class CSVTable {
     }
 
     private void setHeaders(List<String> newHeaders) {
-        headers.addAll(newHeaders);
+        headers.setData(newHeaders);
     }
 
     public List<String> getHeaders() {
-        return hasHeaders() ? List.copyOf(headers) : null;
+        return hasHeaders() ? headers.getData() : null;
     }
 
     public List<String> getRow(int i) {

@@ -25,7 +25,7 @@ class CSVRow {
     }
 
     protected List<String> getData() {
-        return data;
+        return List.copyOf(data);
     }
 
     protected String getCell(int cell) {

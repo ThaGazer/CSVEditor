@@ -34,14 +34,9 @@ public class main {
 
         listHeaders();
 
-        int i = 0;
-        for(List<String> row : table.getTable()) {
-            System.out.println(i + ": " + row.size());
-            i++;
-        }
+        moveColumn(4,15);
 
-        //moveColumn(4,15);
-
+        listHeaders();
         //System.out.println(table.searchCol(16, "Access Granted"));
 
         /*try {
@@ -94,6 +89,7 @@ public class main {
             System.out.println(i + " : " + header);
             i++;
         }
+        System.out.println();
     }
 
     private void addColumn(int index) {
