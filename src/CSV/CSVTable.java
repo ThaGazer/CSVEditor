@@ -71,6 +71,7 @@ public class CSVTable {
 
     public List<String> getCol(int i) {
         List<String> column = new LinkedList<>();
+
         for(CSVRow row : data) {
             column.add(row.getCell(i));
         }
@@ -94,12 +95,24 @@ public class CSVTable {
     }
 
     public void addColumn(int index, String str) {
+        addColumn(index, str, str);
+    }
+
+    public void addColumn(int index, String str, String header) {
+        if(hasHeaders()) {
+            headers.addColumn(index, header);
+        }
+
         for(CSVRow row : data) {
             row.addColumn(index, str);
         }
     }
 
     public void moveColumn(int col, int newLoc) {
+        if(hasHeaders()) {
+            headers.moveColumn(col, newLoc);
+        }
+
         for(CSVRow row : data) {
             row.moveColumn(col, newLoc);
         }
@@ -144,6 +157,10 @@ public class CSVTable {
 
     public void printTable() {
         StringBuilder printedTable = new StringBuilder();
+        if(hasHeaders()) {
+            printedTable.append(getHeaders()).append("\n");
+        }
+
         for(CSVRow row : data) {
             printedTable.append(row).append("\n");
         }
