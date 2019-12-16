@@ -26,28 +26,13 @@ public class main {
     public void go(String[] args) {
         handleUserArgs(args);
 
-        try {
-            readCSV();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        readCSV();
 
         listHeaders();
 
-/*        moveColumn(4,14);
-        addColumn(0,"-2", "Recurrence ref.");
+        //findAndSet(false, 16, "duplicate", 10, "-1");
 
-        listHeaders();*/
-
-        findAndSet(16, "report", 0, "2");
-
-//        System.out.println(table.searchCol(16, "report"));
-
-        try {
-            writeCSV();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
+        //writeCSV();
     }
 
     private void handleUserArgs(String[] args) {
@@ -67,20 +52,25 @@ public class main {
         }
     }
 
-    private void readCSV() throws IOException {
-        table = CSVTable.parse(csvReader, hasHeader());
-        csvReader.close();
-    }
-
-    private void writeCSV() throws IOException {
-        setCSVWriter(csvFile);
-
+    private void readCSV() {
         try {
-            table.write(csvWriter);
+            table = CSVTable.parse(csvReader, hasHeader());
+            csvReader.close();
         } catch(IOException e) {
             e.printStackTrace();
         }
-        csvWriter.close();
+    }
+
+    private void writeCSV() {
+        setCSVWriter(csvFile);
+
+        System.out.println("Writing out file");
+        try {
+            table.write(csvWriter);
+            csvWriter.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void printCSV() {
@@ -99,6 +89,7 @@ public class main {
     private void addColumn(int index) {
         table.addColumn(index);
     }
+
     private void addColumn(int index, String str) {
         table.addColumn(index, str);
     }
@@ -123,11 +114,25 @@ public class main {
         table.moveColumn(c, newLoc);
     }
 
+    private List<Integer> find(boolean matchExact, int c, String find) {
+        List<Integer> matches = table.searchCol(matchExact, c, find);
+        System.out.println(matches.size());
+        System.out.println(matches);
+        return matches;
+    }
+
     private List<Integer> findAndSet(boolean matchExact, int c, String change, int c1, String change1) {
-        for(Integer i : table.searchCol(matchExact, c, change)) {
-            table.setCell(i, c1, change1);
+        List<Integer> matches = find(matchExact, c, change);
+        for(Integer i : matches) {
+            if(table.getRow(i).get(10).equals("-2")) {
+                table.setCell(i, c1, change1);
+            }
         }
-        return table.searchCol(c1, change1);
+        return matches;
+    }
+
+    private void aggregateData() {
+
     }
 
     private void setCSVReader(File file) {

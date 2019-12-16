@@ -50,7 +50,9 @@ public class CSVReader {
                     splitter.add(tmp);
                     tmp = "";
                 } else {
-                    tmp += line.charAt(i);
+                    if(line.charAt(i) >= ' ' && line.charAt(i) <= '~') {
+                        tmp += line.charAt(i);
+                    }
                 }
             }
             splitter.add(tmp);

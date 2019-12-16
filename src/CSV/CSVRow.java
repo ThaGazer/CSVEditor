@@ -50,10 +50,6 @@ class CSVRow {
 
     @Override
     public String toString() {
-        if(isEmpty()) {
-            return null;
-        }
-
-        return getData().toString();
+        return isEmpty() ? null : String.valueOf(getData().size());
     }
 }

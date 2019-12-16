@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+//TODO mark recurrence row
 public class CSVTable {
     private LinkedList<CSVRow> data;
     private boolean hasHeaders;
